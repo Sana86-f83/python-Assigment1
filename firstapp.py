@@ -96,6 +96,8 @@ elif page == "🧠 Quiz":
                 if user_answers[q["question"]] == q["answer"]:
                     score += 1
                     st.success(f"✅ Correct! {q['question']}")
+                    st.balloons()
+                    
                 else:
                     st.error(f"❌ Wrong answer. The correct answer is: **{q['answer']}**")
             total_questions = len(quizzes[language])
