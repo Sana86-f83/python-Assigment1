@@ -99,7 +99,6 @@ def feedback_page():
 
 # Sidebar Navigation
 # Custom CSS for Sidebar Styling
-# Custom CSS for Sidebar Styling
 st.markdown("""
     <style>
         /* Sidebar background color */
@@ -135,10 +134,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+
+# Sidebar with Styling and Emoji
 st.sidebar.title("✨ Sana Faisal 🚀")
-st.sidebar.write("🌟 Welcome to my Streamlit App!🎉")
-st.sidebar.title("📖 Learning Hub")
-page = st.sidebar.radio("Go to", ["🌱 Growth Mindset Challenge", "🧠 Quiz", "📝 Feedback"])
+st.sidebar.write("🌟 Welcome to my Streamlit App! 🎉")
 
 # Contact Us Section
 st.sidebar.markdown("---")  # Divider line
@@ -147,6 +146,8 @@ st.sidebar.write("📧 Email: [sana@example.com](mailto:sana@example.com)")
 st.sidebar.write("🌐 Website: [www.sanafasial.com](https://www.sanafasial.com)")
 st.sidebar.write("📍 Location: Karachi, Pakistan")
 
+st.sidebar.title("📖 Learning Hub")
+page = st.sidebar.radio("Go to", ["🌱 Growth Mindset Challenge", "🧠 Quiz", "📝 Feedback"])
 
 # Navigation Logic
 if page == "🌱 Growth Mindset Challenge":
