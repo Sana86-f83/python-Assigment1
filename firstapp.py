@@ -1,4 +1,6 @@
 import streamlit as st
+from datetime import date  
+
 
 # Function to display the Growth Mindset Challenge page
 def growth_mindset():
@@ -68,43 +70,129 @@ quizzes = {
 def feedback_page():
     st.title("📝 Feedback")
     st.write("We would love to hear your thoughts about this app! Please provide your feedback below:")
-    
-    feedback = st.text_area("Enter your feedback here...")
-    likes   =  st.feedback("stars")
 
-    
+    # Input fields
+    name = st.text_input("First Name", "")
+    feedback_date = st.date_input("Enter Date", value=date.today())
+    feedback = st.text_area("Enter your feedback here...")
+
+    # Rating slider
+    rating = st.feedback("stars")
+
+    # Submit button logic
     if st.button("Submit Feedback"):
-        st.success("✅ Thank you for your feedback! We appreciate your time.")
+        if feedback.strip():
+            with open("feedback.txt", "a", encoding="utf-8") as file:
+                file.write(f"Name: {name}\nDate: {feedback_date}\nFeedback: {feedback}\nRating: {rating}\n" + "-"*50 + "\n")
+
+            st.success("✅ Thank you for your feedback! We appreciate your time.")
+
+            # Display feedback below
+            st.write("### Submitted Feedback")
+            st.write(f"**Name:** {name}")
+            st.write(f"**Date:** {feedback_date}")
+            st.write(f"**Feedback:** {feedback}")
+            st.write(f"**Rating:** {rating}")
+
+        else:
+            st.warning("⚠️ Please enter some feedback before submitting.")
 
 # Sidebar Navigation
+# Custom CSS for Sidebar Styling
+# Custom CSS for Sidebar Styling
+st.markdown("""
+    <style>
+        /* Sidebar background color */
+        [data-testid="stSidebar"] {
+            background-color: #2C3E50; /* Dark Blue */
+        }
+
+        /* Sidebar Title Styling */
+        [data-testid="stSidebar"] h1 {
+            color: #F39C12; /* Golden */
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Sidebar Contact Section */
+        [data-testid="stSidebar"] p {
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        [data-testid="stSidebar"] a {
+            color: #F39C12;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        [data-testid="stSidebar"] a:hover {
+            color: #E67E22;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
+st.sidebar.title("✨ Sana Faisal 🚀")
+st.sidebar.write("🌟 Welcome to my Streamlit App!🎉")
 st.sidebar.title("📖 Learning Hub")
 page = st.sidebar.radio("Go to", ["🌱 Growth Mindset Challenge", "🧠 Quiz", "📝 Feedback"])
+
+# Contact Us Section
+st.sidebar.markdown("---")  # Divider line
+st.sidebar.subheader("📞 Contact Us")
+st.sidebar.write("📧 Email: [sana@example.com](mailto:sana@example.com)")
+st.sidebar.write("🌐 Website: [www.sanafasial.com](https://www.sanafasial.com)")
+st.sidebar.write("📍 Location: Karachi, Pakistan")
+
 
 # Navigation Logic
 if page == "🌱 Growth Mindset Challenge":
     growth_mindset()
+
 elif page == "🧠 Quiz":
     language = st.sidebar.selectbox("Select a programming language", ["Select a Language"] + list(quizzes.keys()))
-    if language and language != "Select a Language":
+    
+    if language == "Select a Language":
+        st.title("🧠 Programming Quiz")
+        st.write("📢 **Please select a language from the sidebar to start the quiz.**")
+    else:
         st.title(f"🧠 {language} Quiz")
         score = 0
         user_answers = {}
+
         for q in quizzes[language]:
             user_answers[q["question"]] = st.radio(q["question"], q["options"], index=None, key=q["question"])
+
         if st.button("✅ Submit All Answers"):
             for q in quizzes[language]:
                 if user_answers[q["question"]] == q["answer"]:
                     score += 1
                     st.success(f"✅ Correct! {q['question']}")
-                    st.balloons()
-                    
                 else:
-                    st.error(f"❌ Wrong answer. The correct answer is: **{q['answer']}**")
-            total_questions = len(quizzes[language])
-            st.write(f"🏆 **Your Final Score: {score}/{total_questions}**")
+                    st.error(f"❌ Incorrect! The correct answer is: {q['answer']}")
+
+            st.write(f"### 🎯 Your Final Score: {score} / {len(quizzes[language])}")
+            if score == len(quizzes[language]):
+                st.balloons()
+            elif score >= len(quizzes[language]) / 2:
+                st.success("🔥 Good job! Keep practicing.")
+            else:
+                st.warning("📚 Keep learning! You'll improve with time.")
+
 elif page == "📝 Feedback":
     feedback_page()
-
-# Footer
-st.markdown("---")
-st.markdown("<h5 style='text-align: center; color:yellow'>Made by Sana Faisal</h5>", unsafe_allow_html=True)
+    
+# Footer 
+st.markdown("----")
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 10px; padding: 20px; color: yellow; font-size: 18px;">
+        🚀 Made with ❤️ by <b>Sana Faisal</b> | © 2025 All Rights Reserved.<br>
+        Follow me on <a href="https://www.linkedin.com/in/sana-faisal-developer/" target="_blank" style="color:lightblue;">LinkedIn</a> | Visit: <a href="https://fusiontrend.pk" target="_blank" style="color:lightblue;">FusionTrend.pk</a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
