@@ -11,12 +11,6 @@ import authentication  # Importing authentication module
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_email = ""
-
-
-# Session state to track login status
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-    st.session_state.user_email = ""
     
 # Track which form is open
 if "form_state" not in st.session_state:
