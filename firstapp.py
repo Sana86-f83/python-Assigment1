@@ -233,9 +233,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-import streamlit as st
-
 # Sidebar with Styling and Emoji
 st.sidebar.title("✨ Sana Faisal 🚀")
 st.sidebar.subheader("🌟 Welcome to my Streamlit App! 🎉")
