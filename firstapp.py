@@ -1,8 +1,58 @@
 import streamlit as st
-from datetime import date  
+import time
+from datetime import date
+import authentication  # Importing authentication module
+
 
 
 # Function to display the Growth Mindset Challenge page
+
+# Session state to track login status
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.user_email = ""
+
+
+# Session state to track login status
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.user_email = ""
+    
+# Track which form is open
+if "form_state" not in st.session_state:
+    st.session_state.form_state = None
+
+# Sidebar Buttons for Authentication
+st.title("User Authentication")
+
+if not st.session_state.logged_in:
+    col1, col2 = st.columns(2)  # Create two equal columns
+
+    with col1:
+        if st.button("Sign Up"):
+            st.session_state.form_state = "signup"
+
+    with col2:
+        if st.button("Sign In"):
+            st.session_state.form_state = "signin"
+
+    # **Show the relevant form based on session state**
+    if st.session_state.form_state == "signup":
+        authentication.signup_page()  # Show signup form
+    
+    if st.session_state.form_state == "signin":
+        authentication.signin_page()  # Show signin form
+
+else:
+    st.success(f"Logged in as {st.session_state.user_email}")
+
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.session_state.user_email = ""
+        st.session_state.form_state = None  # Reset form state
+        st.rerun()
+
+        # home page
 def growth_mindset():
     st.title("🌱 Growth Mindset Challenge")
     st.write("""
@@ -68,13 +118,14 @@ quizzes = {
 
 # Function to display the Feedback Page
 def feedback_page():
-    st.title("📝 Feedback")
+    st.title("📞 Contact Us")
     st.write("We would love to hear your thoughts about this app! Please provide your feedback below:")
 
     # Input fields
-    name = st.text_input("First Name", "")
+    name = st.text_input("Enter Your Name", "")
+    email = st.text_input("Enter your Email")
     feedback_date = st.date_input("Enter Date", value=date.today())
-    feedback = st.text_area("Enter your feedback here...")
+    feedback = st.text_area("Enter your Comment here...")
 
     # Rating slider
     rating = st.feedback("stars")
@@ -83,110 +134,167 @@ def feedback_page():
     if st.button("Submit Feedback"):
         if feedback.strip():
             with open("feedback.txt", "a", encoding="utf-8") as file:
-                file.write(f"Name: {name}\nDate: {feedback_date}\nFeedback: {feedback}\nRating: {rating}\n" + "-"*50 + "\n")
+                file.write(f"Name: {name}\nEmail: {email}\n Date: {feedback_date}\nFeedback: {feedback}\nRating: {rating}\n" + "-"*50 + "\n")
 
             st.success("✅ Thank you for your feedback! We appreciate your time.")
 
             # Display feedback below
             st.write("### Submitted Feedback")
             st.write(f"**Name:** {name}")
+            st.write(f"**Email:** {email}")
             st.write(f"**Date:** {feedback_date}")
             st.write(f"**Feedback:** {feedback}")
             st.write(f"**Rating:** {rating}")
 
         else:
             st.warning("⚠️ Please enter some feedback before submitting.")
+            
 
+# AboutMe page function
+def Aboutme(): 
+    st.title("📌 About Me")
+    st.write("👋 Hello! I'm Sana Faisal, an aspiring Cloud AI Engineer passionate about Python, TypeScript, Next.js, and AI development.")           
+
+    # Rounded image
+    st.image("images/aboutpage.jpg", caption="My Profile", width=450)  # Width adjust kar sakte ho
+
+    st.header("🚀 My Journey:")
+    st.markdown("""
+    - 💡 **Always eager to learn new technologies.**  
+    - 🔍 **Exploring the world of Artificial Intelligence & Cloud Computing.**  
+    - 🎯 **Focused on web development, AI solutions, and cloud-based applications.**  
+    """)
+
+    st.header("🌟 Skills & Expertise")
+    st.markdown("""
+    - 💻 Web Development (HTML, CSS, JavaScript, Tailwind CSS, TypeScript, Next.js)  
+    - 📡 Cloud & AI (Python, Machine Learning, AI Engineering)  
+    - 📈 Digital Marketing & SEO (Shopify, WordPress, Marketing Strategies)  
+    - 📩 Let’s Connect! I’d love to collaborate on exciting tech projects! 🚀🔗  
+    """)
+
+     
 # Sidebar Navigation
 # Custom CSS for Sidebar Styling
 st.markdown("""
     <style>
-        /* Sidebar background color */
+        /* Sidebar Styling */
         [data-testid="stSidebar"] {
-            background-color: #2C3E50; /* Dark Blue */
+            background: linear-gradient(135deg, #1A1A2E, #16213E); /* Gradient Background */
+            padding-top: 20px;
+            border-right: 2px solid #0F3460;
         }
 
         /* Sidebar Title Styling */
         [data-testid="stSidebar"] h1 {
-            color: #F39C12; /* Golden */
+            color: #00FFD1;
             font-size: 28px;
             font-weight: bold;
             text-align: center;
+            text-transform: uppercase;
+            text-shadow: 0px 0px 15px rgba(0, 255, 209, 0.9);
         }
 
-        /* Sidebar Contact Section */
-        [data-testid="stSidebar"] p {
+        /* SelectBox Styling */
+        select {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 16px;
-            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #00FFD1;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
         }
 
-        [data-testid="stSidebar"] a {
-            color: #F39C12;
-            text-decoration: none;
+        /* SelectBox Hover Effect */
+        select:hover {
+            background: #00FFD1;
+            color: black;
             font-weight: bold;
         }
 
-        [data-testid="stSidebar"] a:hover {
-            color: #E67E22;
+        /* Option Styling */
+        option {
+            background: #16213E;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Option Hover Effect */
+        select option:hover {
+            background: #00FFD1 !important;
+            color: black !important;
+            font-weight: bold;
         }
     </style>
 """, unsafe_allow_html=True)
 
 
+import streamlit as st
 
 # Sidebar with Styling and Emoji
 st.sidebar.title("✨ Sana Faisal 🚀")
-st.sidebar.write("🌟 Welcome to my Streamlit App! 🎉")
+st.sidebar.subheader("🌟 Welcome to my Streamlit App! 🎉")
 
-# Contact Us Section
-st.sidebar.markdown("---")  # Divider line
-st.sidebar.subheader("📞 Contact Us")
-st.sidebar.write("📧 Email: [sana@example.com](mailto:sana@example.com)")
-st.sidebar.write("🌐 Website: [www.sanafasial.com](https://www.sanafasial.com)")
-st.sidebar.write("📍 Location: Karachi, Pakistan")
+st.sidebar.title("📚 Learning Hub 🌟")
+st.sidebar.markdown("----")
 
-st.sidebar.title("📖 Learning Hub")
-page = st.sidebar.radio("Go to", ["🌱 Growth Mindset Challenge", "🧠 Quiz", "📝 Feedback"])
+# Ensure session state is initialized
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
-# Navigation Logic
-if page == "🌱 Growth Mindset Challenge":
-    growth_mindset()
+# Navigation (Only Show if Logged In)
+if st.session_state.logged_in:
+    page = st.sidebar.selectbox("🔍 Explore:", ["🏠 Home", "📌 About Me", "🧠 Quiz Section", "📞 Contact Us"])
 
-elif page == "🧠 Quiz":
-    language = st.sidebar.selectbox("Select a programming language", ["Select a Language"] + list(quizzes.keys()))
-    
-    if language == "Select a Language":
-        st.title("🧠 Programming Quiz")
-        st.write("📢 **Please select a language from the sidebar to start the quiz.**")
-    else:
-        st.title(f"🧠 {language} Quiz")
-        score = 0
-        user_answers = {}
+    # Navigation Logic
+    if page == "🏠 Home":
+        growth_mindset()
 
-        for q in quizzes[language]:
-            user_answers[q["question"]] = st.radio(q["question"], q["options"], index=None, key=q["question"])
+    elif page == "📌 About Me":
+        Aboutme()
 
-        if st.button("✅ Submit All Answers"):
+    elif page == "🧠 Quiz Section":
+        language = st.sidebar.selectbox("Select a programming language", ["Select a Language"] + list(quizzes.keys()))
+
+        if language == "Select a Language":
+            st.title("🧠 Programming Quiz")
+            st.write("📢 **Please select a language from the sidebar to start the quiz.**")
+        else:
+            st.title(f"🧠 {language} Quiz")
+            score = 0
+            user_answers = {}
+
             for q in quizzes[language]:
-                if user_answers[q["question"]] == q["answer"]:
-                    score += 1
-                    st.success(f"✅ Correct! {q['question']}")
+                user_answers[q["question"]] = st.radio(q["question"], q["options"], index=None, key=q["question"])
+
+            if st.button("✅ Submit All Answers"):
+                for q in quizzes[language]:
+                    if user_answers[q["question"]] == q["answer"]:
+                        score += 1
+                        st.success(f"✅ Correct! {q['question']}")
+                    else:
+                        st.error(f"❌ Incorrect! The correct answer is: {q['answer']}")
+
+                st.write(f"### 🎯 Your Final Score: {score} / {len(quizzes[language])}")
+                if score == len(quizzes[language]):
+                    st.balloons()
+                elif score >= len(quizzes[language]) / 2:
+                    st.success("🔥 Good job! Keep practicing.")
                 else:
-                    st.error(f"❌ Incorrect! The correct answer is: {q['answer']}")
+                    st.warning("📚 Keep learning! You'll improve with time.")
 
-            st.write(f"### 🎯 Your Final Score: {score} / {len(quizzes[language])}")
-            if score == len(quizzes[language]):
-                st.balloons()
-            elif score >= len(quizzes[language]) / 2:
-                st.success("🔥 Good job! Keep practicing.")
-            else:
-                st.warning("📚 Keep learning! You'll improve with time.")
+    elif page == "📞 Contact Us":
+        feedback_page()
 
-elif page == "📝 Feedback":
-    feedback_page()
-    
-# Footer 
+else:
+    st.warning("Please Sign In to access the pages.")
+
+# Footer
 st.markdown("----")
 st.markdown(
     """
@@ -197,3 +305,23 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
